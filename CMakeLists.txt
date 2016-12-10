@@ -10,7 +10,7 @@ include("engine/compiler.cmake")
 include_directories(.)
 
 set(SOURCE_FILES
-    src/main.cpp src/LD37.cpp src/LD37.hpp src/Room.cpp src/Room.hpp)
+    src/main.cpp src/LD37.cpp src/LD37.hpp src/Room.cpp src/Room.hpp src/Enemy.cpp src/Enemy.hpp)
 
 if (ANDROID)
 	add_library(LD37 SHARED ${SOURCE_FILES})

@@ -1,0 +1,43 @@
+#ifndef LD37_ENEMY_HPP
+#define LD37_ENEMY_HPP
+
+
+#include <Engine/SpriteNode.hpp>
+
+class Enemy: public engine::SpriteNode {
+public:
+	template <typename T>
+	struct MoveDone: public engine::EventHandler<void , engine::Tween<T>*> {
+		Enemy* m_node;
+		bool m_logic;
+		MoveDone(Enemy* node) : m_node(node) {
+
+		}
+
+		virtual void handle(engine::Tween<T>* param) {
+			m_node->NextPoint();
+			param->OnDone.RemoveHandler(this);
+			delete this;
+		}
+	};
+protected:
+	float m_speed;
+	float m_health;
+	size_t m_currentPoint;
+public:
+	Enemy(engine::Scene* scene);
+	~Enemy();
+
+protected:
+	virtual void OnUpdate(sf::Time interval);
+	void NextPoint();
+
+public:
+	virtual void OnInitializeDone();
+
+public:
+	virtual bool initialize(Json::Value& root);
+};
+
+
+#endif //LD37_ENEMY_HPP

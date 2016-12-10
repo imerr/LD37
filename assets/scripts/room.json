@@ -7,6 +7,10 @@
       "sprite": {
         "texture": "assets/images/background.png"
       }
+    },
+    {
+      "position": [512, 250],
+      "childData": "assets/scripts/ant.json"
     }
   ],
   "path": [

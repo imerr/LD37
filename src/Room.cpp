@@ -16,16 +16,19 @@ bool Room::initialize(Json::Value& root) {
 	}
 	float dist = 0;
 	PathPoint* prev = nullptr;
-	// Make sure we reserve enough space so pointers dont change
+	// Make sure we reserve enough space so pointers don't change
 	m_path.reserve(root["path"].size());
 	for (size_t i = 0; i < root["path"].size(); i++) {
 		PathPoint path;
 		path.pos = engine::vector2FromJson<float>(root["path"][i]);
+		path.distSelf = 0;
+		if (prev) {
+			float self = engine::distance(path.pos, prev->pos);
+			path.distSelf = self;
+			dist += self;
+		}
 		path.dist = dist;
 		m_path.push_back(path);
-		if (prev) {
-			dist += engine::distance(path.pos, prev->pos);
-		}
 		prev = &m_path.back();
 	}
 	return true;

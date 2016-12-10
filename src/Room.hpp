@@ -9,6 +9,7 @@ public:
 	struct PathPoint {
 		sf::Vector2f pos;
 		float dist;
+		float distSelf;
 	};
 protected:
 	std::vector<PathPoint> m_path;
