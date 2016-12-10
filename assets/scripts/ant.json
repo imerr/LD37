@@ -1,6 +1,7 @@
 {
   "type": "enemy",
   "size": [40, 36],
+  "origin": "center",
   "sprite": {
     "sheet": {
       "texture": "assets/images/ant.png",

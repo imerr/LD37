@@ -7,7 +7,6 @@
 #include "Room.hpp"
 
 Enemy::Enemy(engine::Scene* scene) : SpriteNode(scene), m_speed(50), m_health(10), m_currentPoint(0) {
-	std::cout << "Made enemy" << std::endl;
 }
 
 Enemy::~Enemy() {
@@ -31,8 +30,6 @@ void Enemy::OnInitializeDone() {
 	auto room = static_cast<Room*>(m_scene);
 	auto p = room->GetPath();
 	SetPosition(p[0].pos.x, p[0].pos.y);
-	std::cout << "Init done" << std::endl;
-
 	NextPoint();
 }
 
@@ -56,4 +53,18 @@ void Enemy::NextPoint() {
 	);
 	auto handler = new MoveDone<sf::Vector2f>(this);
 	tween->OnDone.AddHandler(handler);
+	std::cout << GetRotation() << " -> " << p.angle << std::endl;
+	float rot = GetRotation();
+	// we want -180 to 180, otherwise the object is gonna do weird rotation
+	if (rot > 180) {
+		rot -= 360;
+	}
+	MakeTween<float>(true,
+					 rot,
+					 p.angle,
+					 0.5,
+					 [this](float angle) {
+						 SetRotation(angle);
+					 }
+	);
 }

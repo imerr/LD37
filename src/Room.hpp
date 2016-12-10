@@ -10,6 +10,7 @@ public:
 		sf::Vector2f pos;
 		float dist;
 		float distSelf;
+		float angle;
 	};
 protected:
 	std::vector<PathPoint> m_path;

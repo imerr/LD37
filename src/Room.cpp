@@ -22,14 +22,21 @@ bool Room::initialize(Json::Value& root) {
 		PathPoint path;
 		path.pos = engine::vector2FromJson<float>(root["path"][i]);
 		path.distSelf = 0;
+		path.angle = 0;
 		if (prev) {
 			float self = engine::distance(path.pos, prev->pos);
 			path.distSelf = self;
 			dist += self;
+			path.angle = engine::b2Angle(prev->pos, path.pos) * 180 / engine::fPI;
 		}
 		path.dist = dist;
 		m_path.push_back(path);
 		prev = &m_path.back();
 	}
+	m_waves.reserve(root["waves"].size());
+	for (auto& wave : root["waves"]) {
+		
+	}
 	return true;
 }
+
