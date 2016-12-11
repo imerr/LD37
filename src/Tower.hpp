@@ -17,16 +17,16 @@ protected:
 	bool m_placementMode;
 	float m_range;
 	engine::BaseEventHandler* m_clickHandler;
-	int m_blockingContacts;
 	size_t m_attackFrame;
 	float m_attackCooldown;
 	float m_currentAttackCooldown;
 	sf::Color m_circleColor;
 	b2AABB m_debugAABB;
 	engine::Node* m_damager;
+	std::string m_name;
 public:
 	Tower(engine::Scene* scene);
-	~Tower();
+	virtual ~Tower();
 protected:
 	virtual void OnDraw(sf::RenderTarget& target, sf::RenderStates states, float delta);
 
@@ -44,6 +44,16 @@ public:
 	void Attack(bool active);
 
 	float GetDamage();
+	bool IsPlacing() {
+		return m_placementMode;
+	}
+	std::string GetName() const {
+		return m_name;
+	}
+	void SetName(const std::string& name) {
+		m_name = name;
+	}
+
 };
 
 

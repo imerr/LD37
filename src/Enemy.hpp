@@ -27,7 +27,7 @@ protected:
 	uint32_t m_credits;
 public:
 	Enemy(engine::Scene* scene);
-	~Enemy();
+	virtual ~Enemy();
 
 protected:
 	virtual void OnUpdate(sf::Time interval);

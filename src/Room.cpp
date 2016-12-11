@@ -2,16 +2,18 @@
 #include <Engine/util/json.hpp>
 #include <Engine/Factory.hpp>
 #include <Engine/util/Random.hpp>
-#include <iostream>
-#include <string>
+#include <Engine/Button.hpp>
 
-Room::Room(engine::Game* game) : Scene(game), m_enemyContainer(nullptr), m_nextEnemy(0), m_credits(0),
-								 m_creditText(nullptr), m_tower(nullptr) {
-
+Room::Room(engine::Game* game) :
+		Scene(game), m_enemyContainer(nullptr), m_nextEnemy(0), m_bloodContainer(nullptr),
+		m_credits(200), m_creditText(nullptr), m_tower(nullptr), m_towerContainer(nullptr) {
 }
 
 Room::~Room() {
-
+	for (auto& h : m_buttonHandlers) {
+		delete h;
+	}
+	m_buttonHandlers.clear();
 }
 
 bool Room::initialize(Json::Value& root) {
@@ -50,15 +52,34 @@ bool Room::initialize(Json::Value& root) {
 		}
 		m_waves.push_back(w);
 	}
+	m_waves.reserve(root["towers"].size());
+	for (auto& tower : root["towers"]) {
+		TowerInfo t;
+		t.file = tower.get("file", "nofile").asString();
+		t.name = tower.get("name", "No Name").asString();
+		t.desc = tower.get("name", "No Desc").asString();
+		t.price = tower.get("price", 100).asUInt();
+		m_towers.insert(std::make_pair(t.file, t));
+	}
 	return true;
 }
 
 void Room::OnInitializeDone() {
 	m_enemyContainer = GetChildByID("enemyContainer");
 	m_bloodContainer = GetChildByID("bloodContainer");
+	m_towerContainer = GetChildByID("towerContainer");
 	auto panel = m_ui->GetChildByID("panel");
 	m_creditText = static_cast<engine::Text*>(panel->GetChildByID("credits"));
-
+	for (const auto& info : m_towers) {
+		std::string name = info.first;
+		auto btn = static_cast<engine::Button*>(panel->GetChildByID(name));
+		m_buttonHandlers.push_back(btn->OnClick.MakeHandler([this, name](engine::Button*, sf::Vector2f) {
+			BuyTower(name);
+		}));
+		static_cast<engine::Text*>(btn->GetChildByID("price"))->SetText(std::to_string(info.second.price));
+	}
+	// Update credit display
+	AddCredits(0);
 }
 
 void Room::OnUpdate(sf::Time interval) {
@@ -105,4 +126,44 @@ void Room::AddBlood(sf::Vector2f position) {
 void Room::AddCredits(uint32_t amount) {
 	m_credits += amount;
 	m_creditText->SetText(std::to_string(m_credits));
+}
+
+void Room::BuyTower(std::string name) {
+	if (m_tower && m_tower->IsPlacing()) {
+		AddCredits(m_towers[m_tower->GetName()].price);
+		m_tower->Delete(); // TODO: this crashes for some reason, figure out WHY
+		//m_tower->SetActive(false);
+		m_tower = nullptr;
+		return;
+	}
+
+	if (m_towers.find(name) == m_towers.end()) {
+		return;
+	}
+	auto t = m_towers[name];
+	if (t.price > m_credits) {
+		// TODO: add error sound
+		return;
+	}
+	m_tower = static_cast<Tower*>(
+			engine::Factory::CreateChildFromFile(
+					"assets/scripts/" + t.file + ".json",
+					m_towerContainer
+			)
+	);
+	if (m_tower) {
+		m_tower->SetName(name);
+	}
+	RemoveCredits(m_towers[m_tower->GetName()].price);
+
+	// TODO: info
+}
+
+void Room::RemoveCredits(uint32_t amount) {
+	if (m_credits > amount) {
+		m_credits -= amount;
+	} else {
+		m_credits = 0;
+	}
+	AddCredits(0);
 }

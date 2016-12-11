@@ -7,12 +7,12 @@
 
 Tower::Tower(engine::Scene* scene) : SpriteNode(scene), m_speed(0), m_damage(0), m_speedMultiplier(1),
 									 m_damageMultiplier(1), m_hitbox(0, 0, 1, 1), m_placeCollision(0, 0, 1, 1),
-									 m_attacking(false), m_placementMode(true), m_range(10), m_blockingContacts(0),
+									 m_attacking(false), m_placementMode(true), m_range(10),
 									 m_attackFrame(1), m_attackCooldown(1), m_currentAttackCooldown(0),
 									 m_damager(nullptr) {
 	m_clickHandler = m_scene->GetGame()->OnMouseClick.MakeHandler(
 			[this](const sf::Event::MouseButtonEvent& event, bool down) -> bool {
-				return m_placementMode && down && m_blockingContacts == 0;
+				return m_active && m_placementMode && down && CanPlace();
 			},
 			[this](const sf::Event::MouseButtonEvent& event, bool down) -> bool {
 				Place();
@@ -22,11 +22,11 @@ Tower::Tower(engine::Scene* scene) : SpriteNode(scene), m_speed(0), m_damage(0),
 }
 
 Tower::~Tower() {
-	if (m_clickHandler) {
-		m_scene->GetGame()->OnMouseClick.RemoveHandler(m_clickHandler);
-		delete m_clickHandler;
-		m_clickHandler = nullptr;
-	}
+    if (m_clickHandler) {
+    	m_scene->GetGame()->OnMouseClick.RemoveHandler(m_clickHandler);
+    	delete m_clickHandler;
+    	m_clickHandler = nullptr;
+    }
 }
 
 bool Tower::initialize(Json::Value& root) {

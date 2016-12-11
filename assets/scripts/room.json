@@ -9,20 +9,9 @@
         "texture": "assets/images/background.png"
       }
     },
-    {
-      "identifier": "bloodContainer"
-    },
-    {
-      "identifier": "enemyContainer"
-    },
-    {
-      "identifier": "towerContainer",
-      "children": [
-        {
-          "childData": "assets/scripts/swatter.json"
-        }
-      ]
-    }
+    { "identifier": "bloodContainer"},
+    { "identifier": "enemyContainer"},
+    { "identifier": "towerContainer"}
   ],
   "ui": [
     {
@@ -72,7 +61,20 @@
                 "frames": [2]
               }
             }
-          }
+          },
+          "children": [
+            {
+              "type": "text",
+              "identifier": "price",
+              "position": [70, 50],
+              "text": {
+                "font": "assets/lcd_solid.ttf",
+                "size": 20,
+                "text": "0",
+                "align": "right"
+              }
+            }
+          ]
         }
       ]
     }
@@ -91,17 +93,25 @@
   ],
   "waves": [
     {
-      "delay": 1,
-      "wait": 1,
+      "delay": 10,
+      "wait": 10,
       "spawns": [
-        [200, "ant"]
+        [6, "ant"]
+      ]
+    },
+    {
+      "delay": 0.1,
+      "wait": 10,
+      "spawns": [
+        [10, "ant"]
       ]
     }
   ],
   "towers": [
     {
       "name": "Swatter",
-      "object": "assets/scripts/swatter.json",
+      "desc": "Slow tower. Hits multiple enemies at once",
+      "file": "swatter",
       "cost": 50
     }
   ]

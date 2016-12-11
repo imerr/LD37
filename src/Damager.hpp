@@ -13,7 +13,7 @@ protected:
 	std::unordered_set<Enemy*> m_enemies;
 public:
 	Damager(engine::Scene* scene);
-	~Damager();
+	virtual ~Damager();
 	Tower* GetTower();
 protected:
 	virtual void OnUpdate(sf::Time interval);

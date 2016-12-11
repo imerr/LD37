@@ -4,6 +4,7 @@
 
 #include <Engine/Scene.hpp>
 #include <Engine/Text.hpp>
+#include <unordered_map>
 #include "Tower.hpp"
 
 class Room : public engine::Scene {
@@ -19,6 +20,12 @@ public:
 		float wait;
 		std::vector<std::pair<size_t, std::string>> spawns;
 	};
+	struct TowerInfo {
+		std::string file;
+		std::string name;
+		std::string desc;
+		uint32_t price;
+	};
 protected:
 	std::vector<PathPoint> m_path;
 	engine::Node* m_enemyContainer;
@@ -28,24 +35,32 @@ protected:
 	uint32_t m_credits;
 	engine::Text* m_creditText;
 	Tower* m_tower;
+	std::unordered_map<std::string, TowerInfo> m_towers;
+	engine::Node* m_towerContainer;
+	std::vector<engine::BaseEventHandler*> m_buttonHandlers;
 public:
 	Room(engine::Game* game);
-
+	virtual ~Room();
 protected:
 	virtual void OnUpdate(sf::Time interval);
 
 public:
 	virtual void OnInitializeDone();
 
-	~Room();
 	virtual bool initialize(Json::Value& root);
+
 	const std::vector<PathPoint>& GetPath() const {
 		return m_path;
 	};
 
 	void DuplicateLastWave();
+
 	void AddBlood(sf::Vector2f position);
+
 	void AddCredits(uint32_t amount);
+	void RemoveCredits(uint32_t amount);
+
+	void BuyTower(std::string name);
 };
 
 
