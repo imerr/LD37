@@ -18,16 +18,17 @@
       },
       "attack": {
         "frames": [0, 1, 2, 3, 2, 1, 0],
-        "speed": 0.2,
+        "speed": 0.1,
         "loop": false
       }
     }
   },
   "placeCollision": [0, 0, 40, 36],
-  "speed": 10,
+  "speed": 20,
   "damage": 10,
   "range": 174,
-  "attackTime": [0.6, 0.2],
+  "attackStart": 0.4,
+  "attackDuration": 0.2,
   "body": {
     "type": "static",
     "shapes": [

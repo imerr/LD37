@@ -39,6 +39,7 @@ void Damager::OnUpdate(sf::Time interval) {
 	Tower* tower = GetTower();
 	this->SetPosition(tower->GetPosition());
 	this->SetRotation(tower->GetRotation());
+	m_body->SetAwake(true);
 }
 
 uint8_t Damager::GetType() const {
@@ -60,6 +61,9 @@ Tower* Damager::GetTower() {
 void Damager::SetActive(bool active) {
 	if (!active) {
 		m_enemies.clear();
+		m_body->SetSleepingAllowed(true);
+	} else {
+		m_body->SetSleepingAllowed(false);
 	}
 	engine::Node::SetActive(active);
 }

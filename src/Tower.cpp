@@ -7,8 +7,8 @@
 
 Tower::Tower(engine::Scene* scene) : SpriteNode(scene), m_speed(0), m_damage(0), m_speedMultiplier(1),
 									 m_damageMultiplier(1), m_hitbox(0, 0, 1, 1), m_placeCollision(0, 0, 1, 1),
-									 m_attacking(false), m_placementMode(true), m_range(10),
-									 m_attackFrame(1), m_attackCooldown(1), m_currentAttackCooldown(0),
+									 m_attacking(false), m_placementMode(true), m_range(10), m_attackStart(0),
+									 m_attackDuration(0), m_attackCooldown(1), m_currentAttackCooldown(0),
 									 m_damager(nullptr) {
 	m_clickHandler = m_scene->GetGame()->OnMouseClick.MakeHandler(
 			[this](const sf::Event::MouseButtonEvent& event, bool down) -> bool {
@@ -36,7 +36,8 @@ bool Tower::initialize(Json::Value& root) {
 	m_speed = root.get("speed", 1.0f).asFloat();
 	m_damage = root.get("damage", 1.0f).asFloat();
 	m_range = root.get("range", 10.0f).asFloat();
-	m_attackFrame = root.get("attackFrame", 1).asUInt();
+	m_attackStart = root.get("attackStart", 1).asFloat();
+	m_attackDuration = root.get("attackDuration", 1).asFloat();
 	m_hitbox = engine::rectFromJson<float>(root["hitbox"]);
 	m_placeCollision = engine::rectFromJson<float>(root["placeCollision"]);
 	return true;
@@ -45,7 +46,7 @@ bool Tower::initialize(Json::Value& root) {
 void Tower::OnInitializeDone() {
 	auto attack = m_animations.find("attack");
 	if (attack == m_animations.end()) {
-		std::cout << "Tower (" << GetFilename() << ") does not have attack animation" << std::endl;
+		std::cerr << "Tower (" << GetFilename() << ") does not have attack animation" << std::endl;
 		return;
 	}
 	AddSpeedMultiplier(0);
@@ -75,12 +76,17 @@ void Tower::OnUpdate(sf::Time interval) {
 	}
 	m_currentAttackCooldown -= interval.asSeconds();
 	if (m_currentAttackCooldown < 0) {
+		Attack(false);
 		if (FindTarget()) {
 			PlayAnimation("attack", "default");
 			m_currentAttackCooldown = m_attackCooldown;
 		}
-	} else if (GetAnimationName() == "attack") {
-		Attack(GetAnimation()->GetCurrentFrame() == m_attackFrame);
+	} else if (GetAnimationName() == "attack" || (m_damager && m_damager->IsActive())) {
+		if (m_attackCooldown - m_currentAttackCooldown > m_attackStart + m_attackDuration) {
+			Attack(false);
+		} else if (m_attackCooldown - m_currentAttackCooldown > m_attackStart) {
+			Attack(true);
+		}
 	}
 }
 
@@ -94,13 +100,6 @@ void Tower::OnDraw(sf::RenderTarget& target, sf::RenderStates states, float delt
 		circleShape.setPosition(-m_range + getOrigin().x, -m_range + getOrigin().y);
 		target.draw(circleShape, states);
 	}
-	sf::RectangleShape rect;
-	rect.setPosition(m_debugAABB.lowerBound.x * m_scene->GetPixelMeterRatio(),
-					 m_debugAABB.lowerBound.y * m_scene->GetPixelMeterRatio());
-	rect.setSize(sf::Vector2f((m_debugAABB.upperBound.x - m_debugAABB.lowerBound.x) * m_scene->GetPixelMeterRatio(),
-							  (m_debugAABB.upperBound.y - m_debugAABB.lowerBound.y) * m_scene->GetPixelMeterRatio()));
-	rect.setFillColor(sf::Color(255, 128, 128, 128));
-	target.draw(rect);
 	engine::SpriteNode::OnDraw(target, states, delta);
 }
 

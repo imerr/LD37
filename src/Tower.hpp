@@ -17,11 +17,11 @@ protected:
 	bool m_placementMode;
 	float m_range;
 	engine::BaseEventHandler* m_clickHandler;
-	size_t m_attackFrame;
+	float m_attackStart;
+	float m_attackDuration;
 	float m_attackCooldown;
 	float m_currentAttackCooldown;
 	sf::Color m_circleColor;
-	b2AABB m_debugAABB;
 	engine::Node* m_damager;
 	std::string m_name;
 public:
