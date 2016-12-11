@@ -25,6 +25,7 @@ protected:
 	size_t m_currentPoint;
 	float m_offset;
 	uint32_t m_credits;
+	sf::Vector2f m_positionIncrement;
 public:
 	Enemy(engine::Scene* scene);
 	virtual ~Enemy();
@@ -43,6 +44,10 @@ public:
 
 	float GetDistance();
 	void Damage(float damage);
+
+	sf::Vector2f GetPositionIn(float seconds) {
+		return GetPosition() + (m_positionIncrement * (seconds / (1.0f/60.0f)));
+	}
 
 };
 

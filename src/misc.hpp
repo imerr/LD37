@@ -7,5 +7,6 @@ enum LD36NodeTypes {
 	NT_ENEMY = engine::NT_END,
 	NT_TOWER,
 	NT_DAMAGER,
+	NT_BULLETEMITTER,
 };
 #endif

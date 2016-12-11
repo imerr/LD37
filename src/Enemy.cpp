@@ -55,6 +55,7 @@ void Enemy::NextPoint() {
 										 p.pos + offset,
 										 p.distSelf / m_speed,
 										 [this](const sf::Vector2f& v) {
+											 m_positionIncrement = v - GetPosition();
 											 SetPosition(v.x, v.y);
 										 }
 	);

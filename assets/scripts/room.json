@@ -9,9 +9,9 @@
         "texture": "assets/images/background.png"
       }
     },
-    { "identifier": "bloodContainer"},
-    { "identifier": "enemyContainer"},
-    { "identifier": "towerContainer"}
+    {"identifier": "bloodContainer"},
+    {"identifier": "enemyContainer"},
+    {"identifier": "towerContainer"}
   ],
   "ui": [
     {
@@ -59,6 +59,39 @@
               },
               "active": {
                 "frames": [2]
+              }
+            }
+          },
+          "children": [
+            {
+              "type": "text",
+              "identifier": "price",
+              "position": [70, 50],
+              "text": {
+                "font": "assets/lcd_solid.ttf",
+                "size": 20,
+                "text": "0",
+                "align": "right"
+              }
+            }
+          ]
+        },
+        {
+          "type": "button",
+          "identifier": "snowman",
+          "position": [110, 80],
+          "size": [80, 80],
+          "sprite": {
+            "sheet": "assets/scripts/sheet_buttons.json",
+            "animations": {
+              "default": {
+                "frames": [3]
+              },
+              "hover": {
+                "frames": [4]
+              },
+              "active": {
+                "frames": [5]
               }
             }
           },
@@ -202,6 +235,111 @@
               }
             }
           ]
+        },
+        {
+          "identifier": "towerUpgrade",
+          "active": false,
+          "children": [
+            {
+              "type": "text",
+              "identifier": "name",
+              "position": [15, 310],
+              "text": {
+                "font": "assets/lcd_solid.ttf",
+                "size": 15,
+                "text": "0",
+                "align": "left"
+              }
+            },
+            {
+              "type": "button",
+              "identifier": "button_attack",
+              "position": [15, 340],
+              "size": [148, 88],
+              "sprite": {
+                "sheet": "assets/scripts/sheet_upgrade_buttons.json",
+                "animations": {
+                  "default": {
+                    "frames": [0]
+                  },
+                  "hover": {
+                    "frames": [1]
+                  },
+                  "active": {
+                    "frames": [2]
+                  }
+                }
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "identifier": "level",
+                  "position": [74, 40],
+                  "text": {
+                    "font": "assets/lcd_solid.ttf",
+                    "size": 15,
+                    "text": "lv. XIV",
+                    "align": "center"
+                  }
+                },
+                {
+                  "type": "text",
+                  "identifier": "price",
+                  "position": [74, 60],
+                  "text": {
+                    "font": "assets/lcd_solid.ttf",
+                    "size": 15,
+                    "text": "123456",
+                    "align": "center"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "button",
+              "identifier": "button_speed",
+              "position": [15, 435],
+              "size": [148, 88],
+              "sprite": {
+                "sheet": "assets/scripts/sheet_upgrade_buttons.json",
+                "animations": {
+                  "default": {
+                    "frames": [3]
+                  },
+                  "hover": {
+                    "frames": [4]
+                  },
+                  "active": {
+                    "frames": [5]
+                  }
+                }
+              },
+              "children": [
+                {
+                  "type": "text",
+                  "identifier": "level",
+                  "position": [74, 40],
+                  "text": {
+                    "font": "assets/lcd_solid.ttf",
+                    "size": 15,
+                    "text": "lv. XIV",
+                    "align": "center"
+                  }
+                },
+                {
+                  "type": "text",
+                  "identifier": "price",
+                  "position": [74, 60],
+                  "text": {
+                    "font": "assets/lcd_solid.ttf",
+                    "size": 15,
+                    "text": "123456",
+                    "align": "center"
+                  }
+                }
+              ]
+            }
+          ]
         }
       ]
     }
@@ -220,14 +358,14 @@
   ],
   "waves": [
     {
-      "delay": 10,
+      "delay": 7,
       "wait": 10,
       "spawns": [
-        [6, "ant"]
+        [10, "ant"]
       ]
     },
     {
-      "delay": 0.1,
+      "delay": 1,
       "wait": 10,
       "spawns": [
         [10, "ant"]
@@ -248,7 +386,22 @@
         "Hits multiple enemies at once"
       ],
       "file": "swatter",
-      "cost": 50
+      "price": 200
+    },
+    {
+      "name": "Melty Snowman",
+      "desc": [
+        "Slowly melting snowman",
+        "It's dripping onto your carpet,",
+        "but that doesn't really matter",
+        "It's already ruined from all",
+        "the blood and guts",
+        "",
+        "Medium speed/range tower.",
+        "Hits one enemy at a time"
+      ],
+      "file": "snowman",
+      "price": 50
     }
   ]
 }

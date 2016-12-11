@@ -16,7 +16,7 @@ protected:
 	bool m_attacking;
 	bool m_placementMode;
 	float m_range;
-	engine::BaseEventHandler* m_clickHandler;
+	engine::BaseEventHandler* m_placeHandler;
 	float m_attackStart;
 	float m_attackDuration;
 	float m_attackCooldown;
@@ -24,6 +24,11 @@ protected:
 	sf::Color m_circleColor;
 	engine::Node* m_damager;
 	std::string m_name;
+	engine::BaseEventHandler* m_selectHandler;
+	engine::Tween<uint8_t> m_selectedFlashTween;
+	uint16_t m_upgradeDamage;
+	uint16_t m_upgradeSpeed;
+	uint32_t m_hitTargets;
 public:
 	Tower(engine::Scene* scene);
 	virtual ~Tower();
@@ -53,6 +58,18 @@ public:
 	void SetName(const std::string& name) {
 		m_name = name;
 	}
+	uint16_t GetUpgrade(bool damage = true) {
+		if (damage) {
+			return m_upgradeDamage;
+		}
+		return m_upgradeSpeed;
+	}
+	void AddUpgrade(bool damage = true);
+
+	uint32_t GetHitTargets() {
+		return m_hitTargets;
+	}
+
 
 };
 

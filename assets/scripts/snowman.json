@@ -1,0 +1,70 @@
+{
+  "type": "tower",
+  "size": [32, 28],
+  "origin": "center",
+  "sprite": {
+    "sheet": {
+      "texture": "assets/images/snowman.png",
+      "sprites": [
+        [0, 0, 16, 14],
+        [16, 0, 16, 14],
+        [32, 0, 16, 14],
+        [48, 0, 16, 14],
+        [64, 0, 16, 14],
+        [80, 0, 16, 14],
+        [96, 0, 16, 14],
+        [112, 0, 16, 14]
+      ]
+    },
+    "animations": {
+      "default": {
+        "frames": [0]
+      },
+      "attack": {
+        "frames": [0, 1, 2, 3, 4, 5, 6, 7, 0, 0],
+        "speed": 0.1,
+        "loop": false
+      }
+    }
+  },
+  "placeCollision": [0, 0, 32, 28],
+  "speed": 5,
+  "damage": 5,
+  "range": 300,
+  "attackStart": 0.8,
+  "attackDuration": 0.2,
+  "hitTargets": 1,
+  "body": {
+    "type": "static",
+    "shapes": [
+      {"type": "circle", "radius": 32}
+    ]
+  },
+  "children": [
+    {
+      "type": "bulletEmitter",
+      "particleCount": 10,
+      "origin": "center",
+      "position": [26, 4],
+      "active": false,
+      "identifier": "damager",
+      "bulletConfig": {
+        "type": "damager",
+        "size": [8, 8],
+        "despawn": 20,
+        "sprite": {
+          "texture": "assets/images/snowball.png"
+        },
+        "body": {
+          "type": "dynamic",
+          "bullet": true,
+          "shapes": [
+            {"type": "circle", "radius": 5}
+          ]
+        }
+      },
+      "velocity": 5,
+      "rate": 5
+    }
+  ]
+}

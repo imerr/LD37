@@ -1,16 +1,23 @@
 #include <Engine/util/json.hpp>
 #include <Engine/Game.hpp>
 #include <Engine/util/misc.hpp>
+#include <Engine/ParticleSystem.hpp>
 #include "Tower.hpp"
 #include "misc.hpp"
 #include "Enemy.hpp"
+#include "Room.hpp"
+#include "BulletEmitter.hpp"
 
-Tower::Tower(engine::Scene* scene) : SpriteNode(scene), m_speed(0), m_damage(0), m_speedMultiplier(1),
-									 m_damageMultiplier(1), m_hitbox(0, 0, 1, 1), m_placeCollision(0, 0, 1, 1),
-									 m_attacking(false), m_placementMode(true), m_range(10), m_attackStart(0),
-									 m_attackDuration(0), m_attackCooldown(1), m_currentAttackCooldown(0),
-									 m_damager(nullptr) {
-	m_clickHandler = m_scene->GetGame()->OnMouseClick.MakeHandler(
+Tower::Tower(engine::Scene* scene) :
+		SpriteNode(scene), m_speed(0), m_damage(0), m_speedMultiplier(1),
+		m_damageMultiplier(1), m_hitbox(0, 0, 1, 1), m_placeCollision(0, 0, 1, 1),
+		m_attacking(false), m_placementMode(true), m_range(10), m_attackStart(0),
+		m_attackDuration(0), m_attackCooldown(1), m_currentAttackCooldown(0),
+		m_damager(nullptr),
+		m_selectedFlashTween(128, 255, 0.5, [this](uint8_t value) {
+			SetColor(sf::Color(value, value, value));
+		}, engine::EasingLinear, true, true), m_upgradeDamage(1), m_upgradeSpeed(1), m_hitTargets(1000) {
+	m_placeHandler = m_scene->GetGame()->OnMouseClick.MakeHandler(
 			[this](const sf::Event::MouseButtonEvent& event, bool down) -> bool {
 				return m_active && m_placementMode && down && CanPlace();
 			},
@@ -18,15 +25,33 @@ Tower::Tower(engine::Scene* scene) : SpriteNode(scene), m_speed(0), m_damage(0),
 				Place();
 				return true;
 			}, this);
-
+	m_selectHandler = m_scene->GetGame()->OnMouseClick.MakeHandler(
+			[this](const sf::Event::MouseButtonEvent& event, bool down) -> bool {
+				if (m_active && !m_placementMode && !down) {
+					auto mPos = m_scene->GetGame()->GetMousePosition();
+					b2Vec2 pos(mPos.x / m_scene->GetPixelMeterRatio(), mPos.y / m_scene->GetPixelMeterRatio());
+					auto fixture = m_body->GetFixtureList();
+					do {
+						if (fixture->TestPoint(pos)) {
+							return true;
+						}
+						fixture = fixture->GetNext();
+					} while (fixture);
+				}
+				return false;
+			},
+			[this](const sf::Event::MouseButtonEvent& event, bool down) -> bool {
+				static_cast<Room*>(m_scene)->SetSelectedTower(this);
+				return true;
+			}, this);
 }
 
 Tower::~Tower() {
-    if (m_clickHandler) {
-    	m_scene->GetGame()->OnMouseClick.RemoveHandler(m_clickHandler);
-    	delete m_clickHandler;
-    	m_clickHandler = nullptr;
-    }
+	if (m_placeHandler) {
+		m_scene->GetGame()->OnMouseClick.RemoveHandler(m_placeHandler);
+		delete m_placeHandler;
+		m_placeHandler = nullptr;
+	}
 }
 
 bool Tower::initialize(Json::Value& root) {
@@ -40,6 +65,7 @@ bool Tower::initialize(Json::Value& root) {
 	m_attackDuration = root.get("attackDuration", 1).asFloat();
 	m_hitbox = engine::rectFromJson<float>(root["hitbox"]);
 	m_placeCollision = engine::rectFromJson<float>(root["placeCollision"]);
+	m_hitTargets = root.get("hitTargets", 1000).asUInt();
 	return true;
 }
 
@@ -69,24 +95,31 @@ void Tower::OnUpdate(sf::Time interval) {
 		SetPosition(m_scene->GetGame()->GetMousePosition());
 		return;
 	}
-	if (m_clickHandler) {
-		m_scene->GetGame()->OnMouseClick.RemoveHandler(m_clickHandler);
-		delete m_clickHandler;
-		m_clickHandler = nullptr;
+	if (m_placeHandler) {
+		m_scene->GetGame()->OnMouseClick.RemoveHandler(m_placeHandler);
+		delete m_placeHandler;
+		m_placeHandler = nullptr;
 	}
 	m_currentAttackCooldown -= interval.asSeconds();
+	if (m_attacking || GetAnimationName() == "attack" || (m_damager && m_damager->IsActive())) {
+		if (m_attacking && m_attackCooldown - m_currentAttackCooldown > m_attackStart) {
+			m_attacking = false;
+			Attack(true);
+		} else if (!m_attacking && m_attackCooldown - m_currentAttackCooldown > m_attackStart + m_attackDuration) {
+			Attack(false);
+		}
+	}
 	if (m_currentAttackCooldown < 0) {
 		Attack(false);
 		if (FindTarget()) {
+			m_attacking = true;
 			PlayAnimation("attack", "default");
 			m_currentAttackCooldown = m_attackCooldown;
 		}
-	} else if (GetAnimationName() == "attack" || (m_damager && m_damager->IsActive())) {
-		if (m_attackCooldown - m_currentAttackCooldown > m_attackStart + m_attackDuration) {
-			Attack(false);
-		} else if (m_attackCooldown - m_currentAttackCooldown > m_attackStart) {
-			Attack(true);
-		}
+	}
+	if (m_damager->IsActive()) {
+		m_damager->SetPosition(GetPosition());
+		m_damager->SetRotation(GetRotation());
 	}
 }
 
@@ -99,6 +132,12 @@ void Tower::OnDraw(sf::RenderTarget& target, sf::RenderStates states, float delt
 		circleShape.setOutlineThickness(2);
 		circleShape.setPosition(-m_range + getOrigin().x, -m_range + getOrigin().y);
 		target.draw(circleShape, states);
+	}
+	Room* room = static_cast<Room*>(m_scene);
+	if (room->GetSelectedTower() == this) {
+		m_selectedFlashTween.Update(delta);
+	} else {
+		SetColor(sf::Color::White);
 	}
 	engine::SpriteNode::OnDraw(target, states, delta);
 }
@@ -117,7 +156,14 @@ void Tower::AddSpeedMultiplier(float add) {
 		m_speedMultiplier += add;
 		return;
 	}
-	attack->second->SetSpeed(attack->second->GetSpeed() * (m_speedMultiplier + add) / m_speedMultiplier);
+	m_attackCooldown /= (m_speedMultiplier + add);
+	attack->second->SetSpeed(attack->second->GetSpeed() * m_speedMultiplier / (m_speedMultiplier + add));
+	m_attackStart *= m_speedMultiplier / (m_speedMultiplier + add);
+	m_attackDuration *= m_speedMultiplier / (m_speedMultiplier + add);
+	if (m_damager && m_damager->GetType() == NT_BULLETEMITTER) {
+		BulletEmitter* be = static_cast<BulletEmitter*>(m_damager);
+		be->SetFireRate(be->GetFireRate() * (m_speedMultiplier + add) / m_speedMultiplier);
+	}
 	m_attackCooldown += attack->second->GetSpeed() * attack->second->GetFrames().size();
 	m_speedMultiplier += add;
 }
@@ -155,7 +201,13 @@ bool Tower::FindTarget() {
 		if (rot > 180) {
 			rot -= 360;
 		}
-		float toRot = engine::b2Angle(GetPosition(), enemy->GetPosition()) * 180 / engine::fPI + 90;
+		auto goalPos = enemy->GetPositionIn(m_attackStart);
+		if (m_damager && m_damager->GetType() == NT_BULLETEMITTER) {
+			BulletEmitter* be = static_cast<BulletEmitter*>(m_damager);
+			goalPos = enemy->GetPositionIn(m_attackStart + engine::distance(goalPos, m_damager->GetPosition()) /
+														   (be->GetVelocity() * m_scene->GetPixelMeterRatio()));
+		}
+		float toRot = engine::b2Angle(GetPosition(), goalPos) * 180 / engine::fPI + 90;
 		if (toRot > 180) {
 			toRot -= 360;
 		}
@@ -203,12 +255,29 @@ uint8_t Tower::GetType() const {
 
 void Tower::Attack(bool active) {
 	if (m_damager && m_damager->IsActive() != active) {
+		m_damager->SetPosition(GetPosition());
+		m_damager->SetRotation(GetRotation());
 		m_damager->SetActive(active);
 	}
 }
 
 float Tower::GetDamage() {
 	return m_damage * m_damageMultiplier;
+}
+
+void Tower::AddUpgrade(bool damage) {
+	if (damage) {
+		m_upgradeDamage++;
+		m_damageMultiplier *= 1.2;
+	} else {
+		m_upgradeSpeed++;
+		AddSpeedMultiplier(m_speedMultiplier * 0.2f);
+	}
+	auto room = static_cast<Room*>(m_scene);
+	if (room->GetSelectedTower() == this) {
+		// Update display
+		room->SetSelectedTower(this);
+	}
 }
 
 

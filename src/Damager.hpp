@@ -7,14 +7,19 @@
 #include "Enemy.hpp"
 
 class Tower;
-class Damager: public engine::Node {
+class Damager: public engine::SpriteNode {
 protected:
 	engine::BaseEventHandler* m_contactHandler;
 	std::unordered_set<Enemy*> m_enemies;
+	Tower* m_tower;
+	uint32_t m_hits;
+	engine::BaseEventHandler* m_towerDeleteHandler;
 public:
 	Damager(engine::Scene* scene);
 	virtual ~Damager();
 	Tower* GetTower();
+	void SetTower(Tower* tower);
+
 protected:
 	virtual void OnUpdate(sf::Time interval);
 

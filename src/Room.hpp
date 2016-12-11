@@ -39,6 +39,11 @@ protected:
 	engine::Node* m_towerContainer;
 	std::vector<engine::BaseEventHandler*> m_buttonHandlers;
 	engine::Node* m_towerInfo;
+	Tower* m_selectedTower;
+	engine::BaseEventHandler* m_selectedTowerDeleteHandler;
+	engine::Node* m_towerUpgrade;
+	engine::BaseEventHandler* m_clickUpgradeDamage;
+	engine::BaseEventHandler* m_clickUpgradeSpeed;
 public:
 	Room(engine::Game* game);
 	virtual ~Room();
@@ -62,6 +67,11 @@ public:
 	void RemoveCredits(uint32_t amount);
 
 	void BuyTower(std::string name);
+
+	Tower* GetSelectedTower(){
+		return m_selectedTower;
+	}
+	void SetSelectedTower(Tower* tower);
 };
 
 

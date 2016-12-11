@@ -4,9 +4,24 @@
 #include <Engine/util/Random.hpp>
 #include <Engine/Button.hpp>
 
+// http://stackoverflow.com/a/37609217
+std::string ToRoman(uint32_t a) {
+	std::string M[] = {"", "M", "MM", "MMM"};
+	std::string C[] = {"", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"};
+	std::string X[] = {"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"};
+	std::string I[] = {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"};
+	return M[a / 1000] + C[(a % 1000) / 100] + X[(a % 100) / 10] + I[(a % 10)];
+}
+
+uint32_t UpgradePrice(uint16_t level) {
+	return static_cast<uint32_t>(std::min(15 * powf(static_cast<float>(level), 1.9), 999999.0f));
+}
+
 Room::Room(engine::Game* game) :
 		Scene(game), m_enemyContainer(nullptr), m_nextEnemy(0), m_bloodContainer(nullptr),
-		m_credits(200), m_creditText(nullptr), m_tower(nullptr), m_towerContainer(nullptr), m_towerInfo(nullptr) {
+		m_credits(200000), m_creditText(nullptr), m_tower(nullptr), m_towerContainer(nullptr), m_towerInfo(nullptr),
+		m_selectedTower(nullptr), m_selectedTowerDeleteHandler(nullptr), m_towerUpgrade(nullptr),
+		m_clickUpgradeDamage(nullptr), m_clickUpgradeSpeed(nullptr) {
 }
 
 Room::~Room() {
@@ -14,6 +29,11 @@ Room::~Room() {
 		delete h;
 	}
 	m_buttonHandlers.clear();
+	if (m_selectedTowerDeleteHandler) {
+		delete m_selectedTowerDeleteHandler;
+	}
+	delete m_clickUpgradeDamage;
+	delete m_clickUpgradeSpeed;
 }
 
 bool Room::initialize(Json::Value& root) {
@@ -83,6 +103,28 @@ void Room::OnInitializeDone() {
 	// Update credit display
 	AddCredits(0);
 	m_towerInfo = panel->GetChildByID("towerInfo");
+	m_towerUpgrade = panel->GetChildByID("towerUpgrade");
+	auto upgrade = [this](bool damage){
+		if (!m_selectedTower) {
+			return;
+
+		}
+		uint32_t cost = UpgradePrice(m_selectedTower->GetUpgrade(damage));
+		if (cost > m_credits) {
+			// TODO: play error sound
+			return;
+		}
+		RemoveCredits(cost);
+		m_selectedTower->AddUpgrade(damage);
+	};
+	auto upgradeAttack = static_cast<engine::Button*>(m_towerUpgrade->GetChildByID("button_attack"));
+	m_clickUpgradeDamage = upgradeAttack->OnClick.MakeHandler([upgrade](engine::Button*, sf::Vector2f){
+		upgrade(true);
+	});
+	auto upgradeSpeed = static_cast<engine::Button*>(m_towerUpgrade->GetChildByID("button_speed"));
+	m_clickUpgradeSpeed = upgradeSpeed->OnClick.MakeHandler([upgrade](engine::Button*, sf::Vector2f){
+		upgrade(false);
+	});
 }
 
 void Room::OnUpdate(sf::Time interval) {
@@ -115,7 +157,7 @@ void Room::OnUpdate(sf::Time interval) {
 
 void Room::DuplicateLastWave() {
 	Wave w = m_waves.back();
-	w.delay *= 0.9;
+	w.delay *= 0.95f;
 	for (auto& spawn : w.spawns) {
 		spawn.first = static_cast<size_t>(spawn.first * 1.25f);
 	}
@@ -162,6 +204,7 @@ void Room::BuyTower(std::string name) {
 	}
 	RemoveCredits(m_towers[m_tower->GetName()].price);
 	m_towerInfo->SetActive(true);
+	m_towerUpgrade->SetActive(false);
 	static_cast<engine::Text*>(m_towerInfo->GetChildByID("name"))->SetText(t.name);
 	for (size_t i = 0; i < 10; i++) {
 		static_cast<engine::Text*>(m_towerInfo->GetChildByID("desc_" + std::to_string(i)))
@@ -177,3 +220,30 @@ void Room::RemoveCredits(uint32_t amount) {
 	}
 	AddCredits(0);
 }
+
+
+void Room::SetSelectedTower(Tower* tower) {
+	if (m_selectedTower) {
+		m_selectedTower->OnDelete.RemoveHandler(m_selectedTowerDeleteHandler);
+		delete m_selectedTowerDeleteHandler;
+	}
+	m_selectedTower = tower;
+	m_selectedTower->OnDelete.MakeHandler([this](const engine::Node*) {
+		m_selectedTower = nullptr;
+		delete m_selectedTowerDeleteHandler;
+		m_selectedTowerDeleteHandler = nullptr;
+	});
+	delete m_selectedTowerDeleteHandler;
+	m_towerInfo->SetActive(false);
+	m_towerUpgrade->SetActive(true);
+	static_cast<engine::Text*>(m_towerUpgrade->GetChildByID("name"))->SetText(m_towers[tower->GetName()].name);
+	auto btn = m_towerUpgrade->GetChildByID("button_attack");
+	static_cast<engine::Text*>(btn->GetChildByID("level"))->SetText("lv. " + ToRoman(tower->GetUpgrade(true)));
+	static_cast<engine::Text*>(btn->GetChildByID("price"))
+			->SetText(std::to_string(UpgradePrice(tower->GetUpgrade(true))));
+	btn = m_towerUpgrade->GetChildByID("button_speed");
+	static_cast<engine::Text*>(btn->GetChildByID("level"))->SetText("lv. " + ToRoman(tower->GetUpgrade(false)));
+	static_cast<engine::Text*>(btn->GetChildByID("price"))
+			->SetText(std::to_string(UpgradePrice(tower->GetUpgrade(false))));
+}
+
