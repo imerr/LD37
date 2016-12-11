@@ -17,5 +17,13 @@
         "speed": 0.1
       }
     }
-  }
+  },
+  "body": {
+    "type": "static",
+    "shapes": [
+      {"type": "box", "width": 40, "height": 36}
+    ]
+  },
+  "health": 10,
+  "credits": 10
 }

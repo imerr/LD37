@@ -1,0 +1,9 @@
+{
+  "type": "sprite",
+  "size": [20, 20],
+  "origin": "center",
+  "despawn": 60,
+  "sprite": {
+    "texture": "assets/images/blood.png"
+  }
+}

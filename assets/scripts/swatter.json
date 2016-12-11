@@ -1,0 +1,50 @@
+{
+  "type": "tower",
+  "size": [63, 174],
+  "origin": [30, 159],
+  "sprite": {
+    "sheet": {
+      "texture": "assets/images/swatter.png",
+      "sprites": [
+        [0, 0, 21, 58],
+        [21, 0, 21, 58],
+        [42, 0, 21, 58],
+        [63, 0, 21, 58]
+      ]
+    },
+    "animations": {
+      "default": {
+        "frames": [0]
+      },
+      "attack": {
+        "frames": [0, 1, 2, 3, 2, 1, 0],
+        "speed": 0.2,
+        "loop": false
+      }
+    }
+  },
+  "placeCollision": [0, 0, 40, 36],
+  "speed": 10,
+  "damage": 10,
+  "range": 174,
+  "attackTime": [0.6, 0.2],
+  "body": {
+    "type": "static",
+    "shapes": [
+      {"type": "circle", "radius": 20}
+    ]
+  },
+  "children": [
+    {
+      "type": "damager",
+      "identifier": "damager",
+      "active": false,
+      "body": {
+        "type": "dynamic",
+        "shapes": [
+          {"type": "box", "width": 65, "height": 80, "y": -120}
+        ]
+      }
+    }
+  ]
+}

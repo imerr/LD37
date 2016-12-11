@@ -3,10 +3,15 @@
 //
 
 #include <iostream>
+#include <Engine/util/Random.hpp>
+#include <Engine/Factory.hpp>
 #include "Enemy.hpp"
 #include "Room.hpp"
+#include "misc.hpp"
 
-Enemy::Enemy(engine::Scene* scene) : SpriteNode(scene), m_speed(50), m_health(10), m_currentPoint(0) {
+Enemy::Enemy(engine::Scene* scene) : SpriteNode(scene), m_speed(50), m_health(10), m_currentPoint(0), m_credits(0) {
+	engine::RandomFloat<float> r(-20, 20);
+	m_offset = r();
 }
 
 Enemy::~Enemy() {
@@ -19,6 +24,7 @@ bool Enemy::initialize(Json::Value& root) {
 	}
 	m_speed = root.get("speed", 50).asFloat();
 	m_health = root.get("health", 10).asFloat();
+	m_credits = root.get("credits", 10).asUInt();
 	return true;
 }
 
@@ -29,7 +35,7 @@ void Enemy::OnUpdate(sf::Time interval) {
 void Enemy::OnInitializeDone() {
 	auto room = static_cast<Room*>(m_scene);
 	auto p = room->GetPath();
-	SetPosition(p[0].pos.x, p[0].pos.y);
+	SetPosition(p[0].pos.x, p[0].pos.y + m_offset);
 	NextPoint();
 }
 
@@ -43,9 +49,10 @@ void Enemy::NextPoint() {
 		return;
 	}
 	auto p = room->GetPath()[m_currentPoint];
+	sf::Vector2f offset(m_offset, m_offset);
 	auto tween = MakeTween<sf::Vector2f>(true,
 										 GetPosition(),
-										 p.pos,
+										 p.pos + offset,
 										 p.distSelf / m_speed,
 										 [this](const sf::Vector2f& v) {
 											 SetPosition(v.x, v.y);
@@ -53,7 +60,6 @@ void Enemy::NextPoint() {
 	);
 	auto handler = new MoveDone<sf::Vector2f>(this);
 	tween->OnDone.AddHandler(handler);
-	std::cout << GetRotation() << " -> " << p.angle << std::endl;
 	float rot = GetRotation();
 	// we want -180 to 180, otherwise the object is gonna do weird rotation
 	if (rot > 180) {
@@ -67,4 +73,25 @@ void Enemy::NextPoint() {
 						 SetRotation(angle);
 					 }
 	);
+}
+
+uint8_t Enemy::GetType() const {
+	return NT_ENEMY;
+}
+
+float Enemy::GetDistance() {
+	auto room = static_cast<Room*>(m_scene);
+	auto p = room->GetPath()[m_currentPoint - 1]; // m_currentPoint is always at least 1
+
+	return p.dist + engine::distance(GetPosition(), p.pos);
+}
+
+void Enemy::Damage(float damage) {
+	m_health -= damage;
+	if (m_health <= 0) {
+		auto room = static_cast<Room*>(m_scene);
+		room->AddBlood(GetPosition());
+		room->AddCredits(m_credits);
+		Delete();
+	}
 }

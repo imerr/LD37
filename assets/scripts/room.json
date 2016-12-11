@@ -1,5 +1,6 @@
 {
-  "size": [1024, 576],
+  "size": [1074, 576],
+  "debug": false,
   "children": [
     {
       "type": "sprite",
@@ -9,12 +10,75 @@
       }
     },
     {
-      "position": [512, 250],
-      "childData": "assets/scripts/ant.json"
+      "identifier": "bloodContainer"
+    },
+    {
+      "identifier": "enemyContainer"
+    },
+    {
+      "identifier": "towerContainer",
+      "children": [
+        {
+          "childData": "assets/scripts/swatter.json"
+        }
+      ]
+    }
+  ],
+  "ui": [
+    {
+      "type": "sprite",
+      "identifier": "panel",
+      "position": [1024, 0],
+      "size": [200, 576],
+      "sprite": {
+        "texture": "assets/images/ui.png"
+      },
+      "children": [
+        {
+          "type": "sprite",
+          "size": [29, 28],
+          "position": [30, 30],
+          "origin": "center",
+          "sprite": {
+            "texture": "assets/images/credits.png"
+          }
+        },
+        {
+          "type": "text",
+          "identifier": "credits",
+          "position": [55, 20],
+          "text": {
+            "font": "assets/lcd_solid.ttf",
+            "size": 20,
+            "text": "0",
+            "align": "left"
+          }
+        },
+        {
+          "type": "button",
+          "identifier": "swatter",
+          "position": [15, 80],
+          "size": [80, 80],
+          "sprite": {
+            "sheet": "assets/scripts/sheet_buttons.json",
+            "animations": {
+              "default": {
+                "frames": [0]
+              },
+              "hover": {
+                "frames": [1]
+              },
+              "active": {
+                "frames": [2]
+              }
+            }
+          }
+        }
+      ]
     }
   ],
   "path": [
-    [-10, 50],
+    [-100, 50],
     [70, 50],
     [70, 440],
     [150, 495],
@@ -24,5 +88,21 @@
     [970, 405],
     [735, 410],
     [735, 460]
+  ],
+  "waves": [
+    {
+      "delay": 1,
+      "wait": 1,
+      "spawns": [
+        [200, "ant"]
+      ]
+    }
+  ],
+  "towers": [
+    {
+      "name": "Swatter",
+      "object": "assets/scripts/swatter.json",
+      "cost": 50
+    }
   ]
 }

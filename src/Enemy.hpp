@@ -9,7 +9,6 @@ public:
 	template <typename T>
 	struct MoveDone: public engine::EventHandler<void , engine::Tween<T>*> {
 		Enemy* m_node;
-		bool m_logic;
 		MoveDone(Enemy* node) : m_node(node) {
 
 		}
@@ -24,6 +23,8 @@ protected:
 	float m_speed;
 	float m_health;
 	size_t m_currentPoint;
+	float m_offset;
+	uint32_t m_credits;
 public:
 	Enemy(engine::Scene* scene);
 	~Enemy();
@@ -37,6 +38,12 @@ public:
 
 public:
 	virtual bool initialize(Json::Value& root);
+
+	virtual uint8_t GetType() const;
+
+	float GetDistance();
+	void Damage(float damage);
+
 };
 
 
