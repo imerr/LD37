@@ -6,7 +6,7 @@
 
 Room::Room(engine::Game* game) :
 		Scene(game), m_enemyContainer(nullptr), m_nextEnemy(0), m_bloodContainer(nullptr),
-		m_credits(200), m_creditText(nullptr), m_tower(nullptr), m_towerContainer(nullptr) {
+		m_credits(200), m_creditText(nullptr), m_tower(nullptr), m_towerContainer(nullptr), m_towerInfo(nullptr) {
 }
 
 Room::~Room() {
@@ -57,7 +57,9 @@ bool Room::initialize(Json::Value& root) {
 		TowerInfo t;
 		t.file = tower.get("file", "nofile").asString();
 		t.name = tower.get("name", "No Name").asString();
-		t.desc = tower.get("name", "No Desc").asString();
+		for (auto& desc : tower["desc"]) {
+			t.desc.push_back(desc.asString());
+		}
 		t.price = tower.get("price", 100).asUInt();
 		m_towers.insert(std::make_pair(t.file, t));
 	}
@@ -80,6 +82,7 @@ void Room::OnInitializeDone() {
 	}
 	// Update credit display
 	AddCredits(0);
+	m_towerInfo = panel->GetChildByID("towerInfo");
 }
 
 void Room::OnUpdate(sf::Time interval) {
@@ -104,6 +107,9 @@ void Room::OnUpdate(sf::Time interval) {
 				m_nextEnemy += wave.delay;
 			}
 		}
+	}
+	if (!m_tower || !m_tower->IsPlacing()) {
+		m_towerInfo->SetActive(false);
 	}
 }
 
@@ -155,8 +161,12 @@ void Room::BuyTower(std::string name) {
 		m_tower->SetName(name);
 	}
 	RemoveCredits(m_towers[m_tower->GetName()].price);
-
-	// TODO: info
+	m_towerInfo->SetActive(true);
+	static_cast<engine::Text*>(m_towerInfo->GetChildByID("name"))->SetText(t.name);
+	for (size_t i = 0; i < 10; i++) {
+		static_cast<engine::Text*>(m_towerInfo->GetChildByID("desc_" + std::to_string(i)))
+				->SetText(t.desc.size() - 1 >= i ? t.desc[i] : "");
+	}
 }
 
 void Room::RemoveCredits(uint32_t amount) {

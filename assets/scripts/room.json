@@ -75,6 +75,133 @@
               }
             }
           ]
+        },
+        {
+          "identifier": "towerInfo",
+          "active": false,
+          "children": [
+            {
+              "type": "text",
+              "identifier": "name",
+              "position": [15, 310],
+              "text": {
+                "font": "assets/lcd_solid.ttf",
+                "size": 15,
+                "text": "0",
+                "align": "left"
+              }
+            },
+            {
+              "type": "text",
+              "identifier": "desc_0",
+              "position": [15, 330],
+              "text": {
+                "font": "assets/lcd_solid.ttf",
+                "size": 10,
+                "text": "A very long line to test how long this is",
+                "align": "left"
+              }
+            },
+            {
+              "type": "text",
+              "identifier": "desc_1",
+              "position": [15, 350],
+              "text": {
+                "font": "assets/lcd_solid.ttf",
+                "size": 10,
+                "text": "A very long line to test how long this is",
+                "align": "left"
+              }
+            },
+            {
+              "type": "text",
+              "identifier": "desc_2",
+              "position": [15, 370],
+              "text": {
+                "font": "assets/lcd_solid.ttf",
+                "size": 10,
+                "text": "A very long line to test how long this is",
+                "align": "left"
+              }
+            },
+            {
+              "type": "text",
+              "identifier": "desc_3",
+              "position": [15, 390],
+              "text": {
+                "font": "assets/lcd_solid.ttf",
+                "size": 10,
+                "text": "A very long line to test how long this is",
+                "align": "left"
+              }
+            },
+            {
+              "type": "text",
+              "identifier": "desc_4",
+              "position": [15, 410],
+              "text": {
+                "font": "assets/lcd_solid.ttf",
+                "size": 10,
+                "text": "A very long line to test how long this is",
+                "align": "left"
+              }
+            },
+            {
+              "type": "text",
+              "identifier": "desc_5",
+              "position": [15, 430],
+              "text": {
+                "font": "assets/lcd_solid.ttf",
+                "size": 10,
+                "text": "A very long line to test how long this is",
+                "align": "left"
+              }
+            },
+            {
+              "type": "text",
+              "identifier": "desc_6",
+              "position": [15, 450],
+              "text": {
+                "font": "assets/lcd_solid.ttf",
+                "size": 10,
+                "text": "A very long line to test how long this is",
+                "align": "left"
+              }
+            },
+            {
+              "type": "text",
+              "identifier": "desc_7",
+              "position": [15, 470],
+              "text": {
+                "font": "assets/lcd_solid.ttf",
+                "size": 10,
+                "text": "A very long line to test how long this is",
+                "align": "left"
+              }
+            },
+            {
+              "type": "text",
+              "identifier": "desc_8",
+              "position": [15, 490],
+              "text": {
+                "font": "assets/lcd_solid.ttf",
+                "size": 10,
+                "text": "A very long line to test how long this is",
+                "align": "left"
+              }
+            },
+            {
+              "type": "text",
+              "identifier": "desc_9",
+              "position": [15, 510],
+              "text": {
+                "font": "assets/lcd_solid.ttf",
+                "size": 10,
+                "text": "A very long line to test how long this is",
+                "align": "left"
+              }
+            }
+          ]
         }
       ]
     }
@@ -109,8 +236,17 @@
   ],
   "towers": [
     {
-      "name": "Swatter",
-      "desc": "Slow tower. Hits multiple enemies at once",
+      "name": "S.W.A.T.T.R.",
+      "desc": [
+        "SoftWare Automated Termite",
+        "Terminating Robot",
+        "Works wonders on other insects",
+        "too.(It's really just smashing",
+        "them... What do you expect?)",
+        "",
+        "Slow, close range tower.",
+        "Hits multiple enemies at once"
+      ],
       "file": "swatter",
       "cost": 50
     }

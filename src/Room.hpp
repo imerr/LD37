@@ -23,7 +23,7 @@ public:
 	struct TowerInfo {
 		std::string file;
 		std::string name;
-		std::string desc;
+		std::vector<std::string> desc;
 		uint32_t price;
 	};
 protected:
@@ -38,6 +38,7 @@ protected:
 	std::unordered_map<std::string, TowerInfo> m_towers;
 	engine::Node* m_towerContainer;
 	std::vector<engine::BaseEventHandler*> m_buttonHandlers;
+	engine::Node* m_towerInfo;
 public:
 	Room(engine::Game* game);
 	virtual ~Room();
