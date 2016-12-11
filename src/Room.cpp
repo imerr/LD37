@@ -115,9 +115,9 @@ void Room::OnUpdate(sf::Time interval) {
 
 void Room::DuplicateLastWave() {
 	Wave w = m_waves.back();
-	//w.delay *= 0.9;
+	w.delay *= 0.9;
 	for (auto& spawn : w.spawns) {
-		//	spawn.first = static_cast<size_t>(spawn.first * 1.25f);
+		spawn.first = static_cast<size_t>(spawn.first * 1.25f);
 	}
 	m_waves.push_back(w);
 }
