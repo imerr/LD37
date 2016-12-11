@@ -29,6 +29,7 @@ protected:
 	uint16_t m_upgradeDamage;
 	uint16_t m_upgradeSpeed;
 	uint32_t m_hitTargets;
+	bool m_predict;
 public:
 	Tower(engine::Scene* scene);
 	virtual ~Tower();

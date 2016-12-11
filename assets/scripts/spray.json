@@ -1,0 +1,66 @@
+{
+  "type": "tower",
+  "size": [28, 28],
+  "origin": "center",
+  "sprite": {
+    "sheet": {
+      "texture": "assets/images/spray.png",
+      "sprites": [
+        [0, 0, 19, 19],
+        [19, 0, 19, 19]
+      ]
+    },
+    "animations": {
+      "default": {
+        "frames": [0]
+      },
+      "attack": {
+        "frames": [0, 0, 1, 0],
+        "speed": 0.2,
+        "loop": false
+      }
+    }
+  },
+  "placeCollision": [0, 0, 32, 28],
+  "speed": 30,
+  "damage": 20,
+  "range": 150,
+  "attackStart": 0.4,
+  "attackDuration": 0.2,
+  "predict": false,
+  "hitTargets": 50,
+  "body": {
+    "type": "static",
+    "shapes": [
+      {"type": "circle", "radius": 32}
+    ]
+  },
+  "children": [
+    {
+      "type": "bulletEmitter",
+      "particleCount": 10,
+      "origin": "center",
+      "position": [26, 4],
+      "active": false,
+      "identifier": "damager",
+      "bulletConfig": {
+        "type": "damager",
+        "origin": "center",
+        "size": [80, 80],
+        "despawn": 20,
+        "sprite": {
+          "texture": "assets/images/spraycloud.png"
+        },
+        "body": {
+          "type": "dynamic",
+          "bullet": true,
+          "shapes": [
+            {"type": "circle", "radius": 40}
+          ]
+        }
+      },
+      "velocity": 0.2,
+      "rate": 5
+    }
+  ]
+}

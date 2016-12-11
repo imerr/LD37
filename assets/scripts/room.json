@@ -109,6 +109,40 @@
             }
           ]
         },
+
+        {
+          "type": "button",
+          "identifier": "spray",
+          "position": [15, 170],
+          "size": [80, 80],
+          "sprite": {
+            "sheet": "assets/scripts/sheet_buttons.json",
+            "animations": {
+              "default": {
+                "frames": [6]
+              },
+              "hover": {
+                "frames": [7]
+              },
+              "active": {
+                "frames": [8]
+              }
+            }
+          },
+          "children": [
+            {
+              "type": "text",
+              "identifier": "price",
+              "position": [70, 50],
+              "text": {
+                "font": "assets/lcd_solid.ttf",
+                "size": 20,
+                "text": "0",
+                "align": "right"
+              }
+            }
+          ]
+        },
         {
           "identifier": "towerInfo",
           "active": false,
@@ -402,6 +436,23 @@
       ],
       "file": "snowman",
       "price": 50
+    },
+    {
+      "name": "Insect Be Gone XL",
+      "desc": [
+        "The newest pesticide on the",
+        "market. Will kill ants, worms,",
+        "wasps, ants, red ants, spiders,",
+        "fire ants, mosquito, weaver ants,",
+        "snails, bullet ants and many more",
+        "Did we mention it's effective",
+        "against ants!? ITS CRAZY!",
+        "",
+        "Medium range, slow tower.",
+        "Creates a slow moving cloud"
+      ],
+      "file": "spray",
+      "price": 500
     }
   ]
 }

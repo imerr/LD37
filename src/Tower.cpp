@@ -16,7 +16,7 @@ Tower::Tower(engine::Scene* scene) :
 		m_damager(nullptr),
 		m_selectedFlashTween(128, 255, 0.5, [this](uint8_t value) {
 			SetColor(sf::Color(value, value, value));
-		}, engine::EasingLinear, true, true), m_upgradeDamage(1), m_upgradeSpeed(1), m_hitTargets(1000) {
+		}, engine::EasingLinear, true, true), m_upgradeDamage(1), m_upgradeSpeed(1), m_hitTargets(1000), m_predict(true) {
 	m_placeHandler = m_scene->GetGame()->OnMouseClick.MakeHandler(
 			[this](const sf::Event::MouseButtonEvent& event, bool down) -> bool {
 				return m_active && m_placementMode && down && CanPlace();
@@ -66,6 +66,7 @@ bool Tower::initialize(Json::Value& root) {
 	m_hitbox = engine::rectFromJson<float>(root["hitbox"]);
 	m_placeCollision = engine::rectFromJson<float>(root["placeCollision"]);
 	m_hitTargets = root.get("hitTargets", 1000).asUInt();
+	m_predict = root.get("predict", true).asBool();
 	return true;
 }
 
@@ -202,7 +203,7 @@ bool Tower::FindTarget() {
 			rot -= 360;
 		}
 		auto goalPos = enemy->GetPositionIn(m_attackStart);
-		if (m_damager && m_damager->GetType() == NT_BULLETEMITTER) {
+		if (m_predict && m_damager && m_damager->GetType() == NT_BULLETEMITTER) {
 			BulletEmitter* be = static_cast<BulletEmitter*>(m_damager);
 			goalPos = enemy->GetPositionIn(m_attackStart + engine::distance(goalPos, m_damager->GetPosition()) /
 														   (be->GetVelocity() * m_scene->GetPixelMeterRatio()));

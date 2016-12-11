@@ -21,12 +21,12 @@ Damager::Damager(engine::Scene* scene) : SpriteNode(scene), m_tower(nullptr), m_
 			if (other->GetType() == NT_ENEMY) {
 				Tower* tower = GetTower();
 				Enemy* enemy = static_cast<Enemy*>(other);
-				if (m_enemies.find(enemy) != m_enemies.end() || m_hits >= GetTower()->GetHitTargets()) {
+				if (m_enemies.find(enemy->GetId()) != m_enemies.end() || m_hits >= GetTower()->GetHitTargets()) {
 					return;
 				}
 				m_hits++;
 				enemy->Damage(tower->GetDamage());
-				m_enemies.insert(enemy);
+				m_enemies.insert(enemy->GetId());
 				if (m_hits >= GetTower()->GetHitTargets()) {
 					if (m_despawnTime != std::numeric_limits<float>::infinity()) {
 						Delete();

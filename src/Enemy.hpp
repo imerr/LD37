@@ -26,6 +26,8 @@ protected:
 	float m_offset;
 	uint32_t m_credits;
 	sf::Vector2f m_positionIncrement;
+	uint64_t m_id;
+
 public:
 	Enemy(engine::Scene* scene);
 	virtual ~Enemy();
@@ -47,6 +49,9 @@ public:
 
 	sf::Vector2f GetPositionIn(float seconds) {
 		return GetPosition() + (m_positionIncrement * (seconds / (1.0f/60.0f)));
+	}
+	uint64_t GetId() const {
+		return m_id;
 	}
 
 };

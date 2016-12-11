@@ -8,10 +8,13 @@
 #include "Enemy.hpp"
 #include "Room.hpp"
 #include "misc.hpp"
-
+namespace {
+	uint64_t EnemyId = 0;
+}
 Enemy::Enemy(engine::Scene* scene) : SpriteNode(scene), m_speed(50), m_health(10), m_currentPoint(0), m_credits(0) {
 	engine::RandomFloat<float> r(-20, 20);
 	m_offset = r();
+	m_id = EnemyId++;
 }
 
 Enemy::~Enemy() {
