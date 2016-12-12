@@ -22,7 +22,7 @@ Room::Room(engine::Game* game) :
 		Scene(game), m_enemyContainer(nullptr), m_nextEnemy(0), m_bloodContainer(nullptr),
 		m_credits(80), m_creditText(nullptr), m_tower(nullptr), m_towerContainer(nullptr), m_towerInfo(nullptr),
 		m_selectedTower(nullptr), m_selectedTowerDeleteHandler(nullptr), m_towerUpgrade(nullptr),
-		m_clickUpgradeDamage(nullptr), m_clickUpgradeSpeed(nullptr), m_cookies(1) {
+		m_clickUpgradeDamage(nullptr), m_clickUpgradeSpeed(nullptr), m_cookies(20) {
 	m_buySound = engine::ResourceManager::instance()->MakeSound("assets/sounds/buy.ogg");
 	m_errorSound = engine::ResourceManager::instance()->MakeSound("assets/sounds/error.ogg");
 }
