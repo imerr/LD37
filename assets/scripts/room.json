@@ -109,7 +109,6 @@
             }
           ]
         },
-
         {
           "type": "button",
           "identifier": "spray",
@@ -126,6 +125,39 @@
               },
               "active": {
                 "frames": [8]
+              }
+            }
+          },
+          "children": [
+            {
+              "type": "text",
+              "identifier": "price",
+              "position": [70, 50],
+              "text": {
+                "font": "assets/lcd_solid.ttf",
+                "size": 20,
+                "text": "0",
+                "align": "right"
+              }
+            }
+          ]
+        },
+        {
+          "type": "button",
+          "identifier": "laser",
+          "position": [110, 170],
+          "size": [80, 80],
+          "sprite": {
+            "sheet": "assets/scripts/sheet_buttons.json",
+            "animations": {
+              "default": {
+                "frames": [9]
+              },
+              "hover": {
+                "frames": [10]
+              },
+              "active": {
+                "frames": [11]
               }
             }
           },
@@ -376,33 +408,237 @@
           ]
         }
       ]
+    },
+    {
+      "type": "button",
+      "identifier": "game_over",
+      "size": [1070, 576],
+      "active": false,
+      "sprite": {
+        "sheet": {
+          "texture": "assets/images/gameover.png",
+          "sprites": [
+            [0, 0, 1, 1]
+          ]
+        },
+        "animations": {
+          "default": {
+            "frames": [0]
+          },
+          "hover": {
+            "frames": [0]
+          },
+          "active": {
+            "frames": [0]
+          }
+        }
+      },
+      "children": [
+        {
+          "type": "text",
+          "position": [512, 120],
+          "text": {
+            "font": "assets/lcd_solid.ttf",
+            "size": 40,
+            "text": "Game Over :(",
+            "align": "center"
+          }
+        },
+        {
+          "type": "text",
+          "position": [512, 200],
+          "text": {
+            "font": "assets/lcd_solid.ttf",
+            "size": 20,
+            "text": "The insects ate all of santas cookies",
+            "align": "center"
+          }
+        },
+        {
+          "type": "text",
+          "position": [512, 240],
+          "text": {
+            "font": "assets/lcd_solid.ttf",
+            "size": 20,
+            "text": "and drank all of santas milk.",
+            "align": "center"
+          }
+        },
+        {
+          "type": "text",
+          "position": [512, 280],
+          "text": {
+            "font": "assets/lcd_solid.ttf",
+            "size": 20,
+            "text": "And thus, you ruined christmas. Congratulations.",
+            "align": "center"
+          }
+        },
+        {
+          "type": "text",
+          "position": [512, 350],
+          "text": {
+            "font": "assets/lcd_solid.ttf",
+            "size": 20,
+            "text": "(restart the game to retry)",
+            "align": "center"
+          }
+        }
+      ]
     }
   ],
   "path": [
-    [-100, 50],
-    [70, 50],
-    [70, 440],
-    [150, 495],
-    [545, 520],
-    [555, 185],
-    [975, 190],
-    [970, 405],
-    [735, 410],
-    [735, 460]
+    [-100, 105],
+    [408, 105],
+    [408, 270],
+    [72, 270],
+    [72, 451],
+    [128, 508],
+    [552, 508],
+    [552, 197],
+    [976, 197],
+    [976, 410],
+    [728, 410],
+    [728, 460]
   ],
   "waves": [
     {
-      "delay": 7,
+      "delay": 10,
       "wait": 10,
       "spawns": [
         [10, "ant"]
       ]
     },
     {
+      "delay": 7,
+      "wait": 10,
+      "spawns": [
+        [10, "ant"],
+        [1, "ant_black"]
+      ]
+    },
+    {
+      "delay": 6,
+      "wait": 10,
+      "spawns": [
+        [10, "ant"],
+        [1, "ant_black"],
+        [10, "ant"],
+        [2, "ant_black"]
+      ]
+    },
+    {
+      "delay": 0.05,
+      "wait": 5,
+      "spawns": [
+        [10, "ant"]
+      ]
+    },
+    {
+      "delay": 4,
+      "wait": 10,
+      "spawns": [
+        [5, "ant"],
+        [2, "ant_black"],
+        [10, "ant"],
+        [4, "ant_black"]
+      ]
+    },
+    {
+      "delay": 0.05,
+      "wait": 5,
+      "spawns": [
+        [10, "ant"]
+      ]
+    },
+    {
+      "delay": 0.05,
+      "wait": 5,
+      "spawns": [
+        [15, "ant"]
+      ]
+    },
+    {
+      "delay": 2,
+      "wait": 10,
+      "spawns": [
+        [10, "ant"],
+        [5, "ant_black"],
+        [10, "ant"],
+        [4, "ant_black"]
+      ]
+    },
+    {
+      "delay": 2,
+      "wait": 20,
+      "spawns": [
+        [1, "ant_blue"]
+      ]
+    },
+    {
+      "delay": 2,
+      "wait": 20,
+      "spawns": [
+        [10, "ant"],
+        [5, "ant_black"],
+        [10, "ant"],
+        [5, "ant_black"]
+      ]
+    },
+    {
       "delay": 1,
       "wait": 10,
       "spawns": [
-        [10, "ant"]
+        [30, "ant"],
+        [5, "ant_black"],
+        [30, "ant"],
+        [2, "ant_blue"]
+      ]
+    },
+    {
+      "delay": 0.2,
+      "wait": 20,
+      "spawns": [
+        [10, "ant_black"]
+      ]
+    },
+    {
+      "delay": 0.75,
+      "wait": 10,
+      "spawns": [
+        [50, "ant"],
+        [5, "ant_black"],
+        [50, "ant"],
+        [5, "ant_black"],
+        [2, "ant_blue"],
+        [5, "ant_black"],
+        [50, "ant"]
+      ]
+    },
+    {
+      "delay": 0.75,
+      "wait": 10,
+      "spawns": [
+        [50, "ant"],
+        [5, "ant_black"],
+        [50, "ant"],
+        [5, "ant_black"],
+        [2, "ant_blue"],
+        [5, "ant_black"],
+        [50, "ant"]
+      ]
+    },
+    {
+      "delay": 0.75,
+      "wait": 10,
+      "spawns": [
+        [50, "ant_black"],
+        [5, "ant_blue"],
+        [50, "ant"],
+        [5, "ant_black"],
+        [10, "ant_blue"],
+        [5, "ant_black"],
+        [50, "ant"]
       ]
     }
   ],
@@ -440,7 +676,7 @@
     {
       "name": "Insect Be Gone XL",
       "desc": [
-        "The newest pesticide on the",
+        "The best pesticide on the",
         "market. Will kill ants, worms,",
         "wasps, ants, red ants, spiders,",
         "fire ants, mosquito, weaver ants,",
@@ -453,6 +689,22 @@
       ],
       "file": "spray",
       "price": 500
+    },
+    {
+      "name": "LOW 2500 OC Edition",
+      "desc": [
+        "The LOW (Laser On Wheels)",
+        "will exterminate all kinds",
+        "of insects without breaking a sweat.",
+        "It will fry hundrets in seconds.",
+        "No more worrying about those pesky",
+        "buggers (see what we did there?)",
+        "",
+        "High range/damage, fast tower.",
+        "Pew Pew"
+      ],
+      "file": "laser",
+      "price": 2000
     }
   ]
 }

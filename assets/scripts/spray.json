@@ -29,6 +29,7 @@
   "attackDuration": 0.2,
   "predict": false,
   "hitTargets": 50,
+  "soundFile": "spray.ogg",
   "body": {
     "type": "static",
     "shapes": [

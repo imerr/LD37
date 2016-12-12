@@ -51,5 +51,6 @@ void BulletEmitter::Fire() {
 	m_nextFire = m_fireRate;
 	float a = (GetParent()->GetRotation() - 90) / 180 * engine::fPI;
 	next->SetPosition(GetParent()->GetPosition());
+	next->SetRotation(GetParent()->GetRotation());
 	next->GetBody()->SetLinearVelocity(b2Vec2(cosf(a) * m_velocity, sinf(a) * m_velocity));
 }

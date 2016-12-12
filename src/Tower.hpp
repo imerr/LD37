@@ -4,6 +4,7 @@
 
 #include <Engine/SpriteNode.hpp>
 #include <Engine/Text.hpp>
+#include <SFML/Audio.hpp>
 
 class Tower: public engine::SpriteNode {
 protected:
@@ -30,6 +31,8 @@ protected:
 	uint16_t m_upgradeSpeed;
 	uint32_t m_hitTargets;
 	bool m_predict;
+	sf::Sound* m_sound;
+	std::string m_soundFile;
 public:
 	Tower(engine::Scene* scene);
 	virtual ~Tower();
@@ -70,6 +73,7 @@ public:
 	uint32_t GetHitTargets() {
 		return m_hitTargets;
 	}
+
 
 
 };

@@ -47,7 +47,7 @@ void Enemy::NextPoint() {
 	m_currentPoint++;
 	if (m_currentPoint == room->GetPath().size()) {
 		// TODO: subtract health
-		//room->EnemyEnd
+		room->EnemyEnd();
 		Delete();
 		return;
 	}

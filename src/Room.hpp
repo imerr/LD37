@@ -44,6 +44,9 @@ protected:
 	engine::Node* m_towerUpgrade;
 	engine::BaseEventHandler* m_clickUpgradeDamage;
 	engine::BaseEventHandler* m_clickUpgradeSpeed;
+	sf::Sound* m_buySound;
+	sf::Sound* m_errorSound;
+	int32_t m_cookies;
 public:
 	Room(engine::Game* game);
 	virtual ~Room();
@@ -72,6 +75,9 @@ public:
 		return m_selectedTower;
 	}
 	void SetSelectedTower(Tower* tower);
+
+
+	void EnemyEnd();
 };
 
 

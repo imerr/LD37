@@ -1,0 +1,30 @@
+{
+  "type": "enemy",
+  "size": [40, 36],
+  "origin": "center",
+  "sprite": {
+    "sheet": {
+      "texture": "assets/images/ant_black.png",
+      "sprites": [
+        [0, 0, 40, 36],
+        [40, 0, 40, 36],
+        [80, 0, 40, 36]
+      ]
+    },
+    "animations": {
+      "default": {
+        "frames": [0, 1, 2, 1],
+        "speed": 0.1
+      }
+    }
+  },
+  "body": {
+    "type": "static",
+    "shapes": [
+      {"type": "box", "width": 40, "height": 36}
+    ]
+  },
+  "health": 36,
+  "credits": 15,
+  "speed": 60
+}

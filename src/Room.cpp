@@ -3,6 +3,7 @@
 #include <Engine/Factory.hpp>
 #include <Engine/util/Random.hpp>
 #include <Engine/Button.hpp>
+#include <Engine/ResourceManager.hpp>
 
 // http://stackoverflow.com/a/37609217
 std::string ToRoman(uint32_t a) {
@@ -19,9 +20,11 @@ uint32_t UpgradePrice(uint16_t level) {
 
 Room::Room(engine::Game* game) :
 		Scene(game), m_enemyContainer(nullptr), m_nextEnemy(0), m_bloodContainer(nullptr),
-		m_credits(200000), m_creditText(nullptr), m_tower(nullptr), m_towerContainer(nullptr), m_towerInfo(nullptr),
+		m_credits(80), m_creditText(nullptr), m_tower(nullptr), m_towerContainer(nullptr), m_towerInfo(nullptr),
 		m_selectedTower(nullptr), m_selectedTowerDeleteHandler(nullptr), m_towerUpgrade(nullptr),
-		m_clickUpgradeDamage(nullptr), m_clickUpgradeSpeed(nullptr) {
+		m_clickUpgradeDamage(nullptr), m_clickUpgradeSpeed(nullptr), m_cookies(1) {
+	m_buySound = engine::ResourceManager::instance()->MakeSound("assets/sounds/buy.ogg");
+	m_errorSound = engine::ResourceManager::instance()->MakeSound("assets/sounds/error.ogg");
 }
 
 Room::~Room() {
@@ -107,13 +110,13 @@ void Room::OnInitializeDone() {
 	auto upgrade = [this](bool damage){
 		if (!m_selectedTower) {
 			return;
-
 		}
 		uint32_t cost = UpgradePrice(m_selectedTower->GetUpgrade(damage));
 		if (cost > m_credits) {
-			// TODO: play error sound
+			m_errorSound->play();
 			return;
 		}
+		m_buySound->play();
 		RemoveCredits(cost);
 		m_selectedTower->AddUpgrade(damage);
 	};
@@ -179,8 +182,7 @@ void Room::AddCredits(uint32_t amount) {
 void Room::BuyTower(std::string name) {
 	if (m_tower && m_tower->IsPlacing()) {
 		AddCredits(m_towers[m_tower->GetName()].price);
-		m_tower->Delete(); // TODO: this crashes for some reason, figure out WHY
-		//m_tower->SetActive(false);
+		m_tower->Delete();
 		m_tower = nullptr;
 		return;
 	}
@@ -190,7 +192,7 @@ void Room::BuyTower(std::string name) {
 	}
 	auto t = m_towers[name];
 	if (t.price > m_credits) {
-		// TODO: add error sound
+		m_errorSound->play();
 		return;
 	}
 	m_tower = static_cast<Tower*>(
@@ -210,6 +212,7 @@ void Room::BuyTower(std::string name) {
 		static_cast<engine::Text*>(m_towerInfo->GetChildByID("desc_" + std::to_string(i)))
 				->SetText(t.desc.size() - 1 >= i ? t.desc[i] : "");
 	}
+	m_buySound->play();
 }
 
 void Room::RemoveCredits(uint32_t amount) {
@@ -245,5 +248,12 @@ void Room::SetSelectedTower(Tower* tower) {
 	static_cast<engine::Text*>(btn->GetChildByID("level"))->SetText("lv. " + ToRoman(tower->GetUpgrade(false)));
 	static_cast<engine::Text*>(btn->GetChildByID("price"))
 			->SetText(std::to_string(UpgradePrice(tower->GetUpgrade(false))));
+}
+
+void Room::EnemyEnd() {
+	m_cookies--;
+	if (m_cookies == 0) {
+		m_ui->GetChildByID("game_over")->SetActive(true);
+	}
 }
 

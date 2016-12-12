@@ -25,10 +25,11 @@
   },
   "placeCollision": [0, 0, 40, 36],
   "speed": 20,
-  "damage": 10,
+  "damage": 25,
   "range": 174,
   "attackStart": 0.4,
   "attackDuration": 0.2,
+  "soundFile": "swatter.ogg",
   "body": {
     "type": "static",
     "shapes": [

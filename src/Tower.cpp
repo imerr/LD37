@@ -2,6 +2,7 @@
 #include <Engine/Game.hpp>
 #include <Engine/util/misc.hpp>
 #include <Engine/ParticleSystem.hpp>
+#include <Engine/ResourceManager.hpp>
 #include "Tower.hpp"
 #include "misc.hpp"
 #include "Enemy.hpp"
@@ -16,7 +17,8 @@ Tower::Tower(engine::Scene* scene) :
 		m_damager(nullptr),
 		m_selectedFlashTween(128, 255, 0.5, [this](uint8_t value) {
 			SetColor(sf::Color(value, value, value));
-		}, engine::EasingLinear, true, true), m_upgradeDamage(1), m_upgradeSpeed(1), m_hitTargets(1000), m_predict(true) {
+		}, engine::EasingLinear, true, true), m_upgradeDamage(1), m_upgradeSpeed(1), m_hitTargets(1000),
+		m_predict(true), m_sound(nullptr) {
 	m_placeHandler = m_scene->GetGame()->OnMouseClick.MakeHandler(
 			[this](const sf::Event::MouseButtonEvent& event, bool down) -> bool {
 				return m_active && m_placementMode && down && CanPlace();
@@ -67,6 +69,7 @@ bool Tower::initialize(Json::Value& root) {
 	m_placeCollision = engine::rectFromJson<float>(root["placeCollision"]);
 	m_hitTargets = root.get("hitTargets", 1000).asUInt();
 	m_predict = root.get("predict", true).asBool();
+	m_soundFile = root.get("soundFile", "").asString();
 	return true;
 }
 
@@ -81,7 +84,7 @@ void Tower::OnInitializeDone() {
 	if (!m_damager) {
 		std::cerr << "Tower doesn't have damager" << std::endl;
 	}
-
+	m_sound = engine::ResourceManager::instance()->MakeSound("assets/sounds/" + m_soundFile);
 }
 
 void Tower::OnUpdate(sf::Time interval) {
@@ -106,6 +109,9 @@ void Tower::OnUpdate(sf::Time interval) {
 		if (m_attacking && m_attackCooldown - m_currentAttackCooldown > m_attackStart) {
 			m_attacking = false;
 			Attack(true);
+			if (m_sound) {
+				m_sound->play();
+			}
 		} else if (!m_attacking && m_attackCooldown - m_currentAttackCooldown > m_attackStart + m_attackDuration) {
 			Attack(false);
 		}
@@ -137,7 +143,7 @@ void Tower::OnDraw(sf::RenderTarget& target, sf::RenderStates states, float delt
 	Room* room = static_cast<Room*>(m_scene);
 	if (room->GetSelectedTower() == this) {
 		m_selectedFlashTween.Update(delta);
-	} else {
+	} else if (!m_placementMode) {
 		SetColor(sf::Color::White);
 	}
 	engine::SpriteNode::OnDraw(target, states, delta);

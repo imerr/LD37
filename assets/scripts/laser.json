@@ -1,19 +1,15 @@
 {
   "type": "tower",
-  "size": [32, 28],
+  "size": [20, 32],
   "origin": "center",
   "sprite": {
     "sheet": {
-      "texture": "assets/images/snowman.png",
+      "texture": "assets/images/laser.png",
       "sprites": [
-        [0, 0, 16, 14],
-        [16, 0, 16, 14],
-        [32, 0, 16, 14],
-        [48, 0, 16, 14],
-        [64, 0, 16, 14],
-        [80, 0, 16, 14],
-        [96, 0, 16, 14],
-        [112, 0, 16, 14]
+        [0, 0, 10, 16],
+        [10, 0, 10, 16],
+        [20, 0, 10, 16],
+        [30, 0, 10, 16]
       ]
     },
     "animations": {
@@ -21,20 +17,21 @@
         "frames": [0]
       },
       "attack": {
-        "frames": [0, 1, 2, 3, 4, 5, 6, 7, 0, 0],
+        "frames": [0, 1, 2, 3, 0],
         "speed": 0.1,
         "loop": false
       }
     }
   },
   "placeCollision": [0, 0, 32, 28],
-  "speed": 5,
-  "damage": 5,
-  "range": 240,
-  "attackStart": 0.8,
+  "speed": 0.1,
+  "damage": 20,
+  "range": 400,
+  "attackStart": 0.3,
   "attackDuration": 0.2,
-  "hitTargets": 1,
-  "soundFile": "snowman.ogg",
+  "predict": true,
+  "hitTargets": 5,
+  "soundFile": "laser.ogg",
   "body": {
     "type": "static",
     "shapes": [
@@ -51,21 +48,22 @@
       "identifier": "damager",
       "bulletConfig": {
         "type": "damager",
-        "size": [8, 8],
+        "origin": "center",
+        "size": [2, 20],
         "despawn": 20,
         "sprite": {
-          "texture": "assets/images/snowball.png"
+          "texture": "assets/images/laserbeam.png"
         },
         "body": {
           "type": "dynamic",
           "bullet": true,
           "shapes": [
-            {"type": "circle", "radius": 5}
+            {"type": "box", "width": 2, "height": 20}
           ]
         }
       },
-      "velocity": 5,
-      "rate": 5
+      "velocity": 15,
+      "rate": 20
     }
   ]
 }
